@@ -99,7 +99,11 @@ the first change; service-script backups go under `/var/backups/emberbsd-kde`
 so rcorder will not execute them. It is intended for a dedicated demo VM; review it before
 applying it to a system with custom desktop configuration.
 
-Log in through XDM. Run `sh verify.sh` in a desktop terminal. It checks
+At the XDM screen, enter the username and press Enter. The `Password`
+prompt then becomes active; enter the password and press Enter again.
+Clicking the initially empty second row does not advance the login prompt.
+
+Run `sh verify.sh` in a desktop terminal. It checks
 KWin and Plasma processes, X11 dimensions, installed applications, a home
 directory write, DNS and HTTPS. Also check the UTM window directly:
 
