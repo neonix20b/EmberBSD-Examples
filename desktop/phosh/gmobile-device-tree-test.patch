@@ -1,0 +1,32 @@
+--- a/tests/test-device-tree.c
++++ b/tests/test-device-tree.c
+@@ -17,6 +17,21 @@
+   g_auto (GStrv) compatibles = NULL;
+   GError *err = NULL;
+ 
++#ifndef __linux__
++  /* The implementation explicitly reports unsupported outside Linux. */
++  compatibles = gm_device_tree_get_compatibles (TEST_DATA_DIR "/doesnotexist", &err);
++  g_assert_null (compatibles);
++  g_assert_error (err, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED);
++  g_clear_error (&err);
++
++  compatibles = gm_device_tree_get_compatibles (TEST_DATA_DIR "/doesnotexist", NULL);
++  g_assert_null (compatibles);
++
++  compatibles = gm_device_tree_get_compatibles (TEST_DATA_DIR "/compatibles1", &err);
++  g_assert_null (compatibles);
++  g_assert_error (err, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED);
++  g_clear_error (&err);
++#else
+   /* nonexistent */
+   compatibles = gm_device_tree_get_compatibles (TEST_DATA_DIR "/doesnotexist", &err);
+   g_assert_null (compatibles);
+@@ -41,6 +56,7 @@
+   compatibles = gm_device_tree_get_compatibles (TEST_DATA_DIR "/compatibles2", &err);
+   g_assert_no_error (err);
+   g_assert_nonnull (compatibles);
++#endif
+ }
+ 
+ 
