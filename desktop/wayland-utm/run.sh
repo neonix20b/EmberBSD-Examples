@@ -33,7 +33,9 @@ case "$2" in
     *) echo 'Choose software or virgl.' >&2; exit 2 ;;
 esac
 session=$(mktemp -d "/tmp/emberbsd-wayland-$(id -u).XXXXXXXX")
+script=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 mkdir "$session/runtime" "$session/config"
+cp "$script/client.sh" "$session/client.sh"
 cat > "$session/config/rc.xml" <<'EOF'
 <?xml version="1.0"?>
 <labwc_config>
@@ -51,18 +53,29 @@ WLR_DRM_DEVICES=/dev/dri/card0
 LIBSEAT_BACKEND=seatd
 QT_QPA_PLATFORM=wayland
 GDK_BACKEND=wayland
-LD_LIBRARY_PATH="$prefix/lib:/usr/pkg/lib:/usr/X11R7/lib"
+library_path="$prefix/lib:/usr/pkg/lib:/usr/X11R7/lib"
 LIBGL_DRIVERS_PATH="$prefix/lib/dri"
 export XDG_RUNTIME_DIR XDG_SESSION_TYPE WLR_BACKENDS WLR_DRM_DEVICES
 export LIBSEAT_BACKEND WLR_RENDERER QT_QPA_PLATFORM GDK_BACKEND
-export LD_LIBRARY_PATH LIBGL_DRIVERS_PATH
-ldd "$prefix/bin/labwc" > "$session/libraries.txt"
+export LIBGL_DRIVERS_PATH
 printf 'Native DRM session; mode: %s; logs and saved file: %s\n' "$2" "$session"
 echo 'Save a sentence in Kate, test menus/modifiers, then close Kate to exit.'
 echo 'Ctrl+Alt+Escape also exits. Keep an SSH recovery connection available.'
 status=0
-seatd-launch -l debug -- dbus-run-session -- "$prefix/bin/labwc" \
-    -d -C "$session/config" -S "kate --new --block $session/input.txt" \
+seatd-launch -l debug -- env LD_LIBRARY_PATH="$library_path" \
+    dbus-run-session -- "$prefix/bin/labwc" \
+    -d -C "$session/config" -S "/bin/sh $session/client.sh $session" \
     > "$session/session.log" 2>&1 || status=$?
+# labwc exits successfully even if its primary client failed. Require the
+# client's own completion receipt, written after the setuid launcher boundary.
+if [ "$status" -eq 0 ]; then
+    if [ ! -f "$session/client.status" ]; then
+        echo 'Client did not complete; session interrupted or startup failed.' >&2
+        status=1
+    else
+        read -r status < "$session/client.status"
+        case "$status" in ''|*[!0-9]*) status=1 ;; esac
+    fi
+fi
 printf 'Session exited with status %s; evidence retained at %s\n' "$status" "$session"
 exit "$status"

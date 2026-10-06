@@ -71,6 +71,11 @@ It starts a separate D-Bus session and native Wayland Kate. Save a sentence,
 use menus, test modifiers and pointer coordinates, then close Kate to exit.
 Ctrl+Alt+Escape also terminates the compositor. Logs, library paths and the
 saved file remain in the printed mode-0700 temporary directory.
+The private library path is restored after `seatd-launch` drops privileges,
+because NetBSD removes it at the setuid boundary. A client completion receipt
+detects failed startup or crashes even when labwc itself returns success.
+Exit through the compositor shortcut before Kate completes is reported as
+an interrupted probe, with its evidence retained.
 
 Software mode selects wlroots Pixman and software rendering for clients.
 VirGL mode selects GLES and removes the known software overrides. The

@@ -134,8 +134,10 @@ main(int argc, char **argv)
 	}
 	if (!eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
 		egl_failure("release context");
-	eglDestroyContext(display, context);
-	eglTerminate(display);
+	if (!eglDestroyContext(display, context))
+		egl_failure("eglDestroyContext");
+	if (!eglTerminate(display))
+		egl_failure("eglTerminate");
 	if (gbm != NULL)
 		gbm_device_destroy(gbm);
 	if (fd >= 0)
