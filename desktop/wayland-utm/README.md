@@ -91,14 +91,19 @@ It starts a separate D-Bus session and native Wayland Kate. Save a sentence,
 use menus, test modifiers and pointer coordinates, then close Kate to exit.
 Ctrl+Alt+Escape also terminates the compositor. Logs, library paths and the
 saved file remain in the printed mode-0700 temporary directory.
-The private library path is restored after `seatd-launch` drops privileges,
-because NetBSD removes it at the setuid boundary. A client completion receipt
+The compositor's private library path is restored after `seatd-launch` drops
+privileges, because NetBSD removes it at the setuid boundary. Packaged Qt
+links base EGL/GL SONAMEs that differ from the private Mesa. Kate therefore
+runs as a native software/SHM input client with its packaged libraries and
+cleared private loader paths. The explicit EGL probe tests the private GPU
+stack separately. A client completion receipt
 detects failed startup or crashes even when labwc itself returns success.
 Exit through the compositor shortcut before Kate completes is reported as
 an interrupted probe, with its evidence retained.
 
-Software mode selects wlroots Pixman and software rendering for clients.
-VirGL mode selects GLES and removes the known software overrides. The
+Software mode selects wlroots Pixman. VirGL mode selects GLES and removes
+the compositor's known software overrides. Kate remains a software/SHM
+input client in both modes; this does not test accelerated client sharing. The
 launcher never creates users, changes passwords, enables automatic login,
 or changes the default display manager. Xwayland is disabled in this first
 build; native GNOME Wayland remains a separate porting task.
