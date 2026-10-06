@@ -1,6 +1,11 @@
-# Plasma Mobile feasibility probe
+# Historical Plasma Mobile 6.5.2 feasibility probe
 
-**Status on 2026-10-06: blocked at source configuration; no running mobile shell.**
+**Historical result: 6.5.2 stopped at source configuration.**
+
+The current port targets stable Plasma Mobile 6.7.5 in
+[EmberBSD Ports](https://github.com/neonix20b/EmberBSD-Ports). This old probe
+records an earlier investigation; do not use the binary catalog's age to
+choose the EmberBSD desktop version. KDE 4 setup is retired.
 
 This probe configures the unmodified Plasma Mobile 6.5.2 release on
 EmberBSD/NetBSD. Version 6.5.2 matches the Plasma libraries in the tested
@@ -14,7 +19,7 @@ configuration, or claim to test a physical phone.
 ## Run
 
 Prerequisites are the Qt 6 and KF6 development packages already present in
-the [KDE setup](../kde-utm/README.md), including Qt Quick and Qt Wayland.
+the original test environment, including Qt Quick and Qt Wayland.\nThe retired KDE 4 setup is not a prerequisite or a supported installation path.
 On that installation, these additional tools are needed (as root):
 
 ```sh
