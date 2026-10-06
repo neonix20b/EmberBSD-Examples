@@ -4,6 +4,7 @@ Standalone examples for [EmberBSD](https://github.com/apovalixin/EmberBSD),
 a NetBSD-derived Unix for intelligent devices.
 
 - [Local text generation and speech recognition with llama.cpp and whisper.cpp](ai/local-inference/README.md)
+- [Simulated device telemetry and commands with Zenoh and ROS 2 Jazzy](robotics/zenoh-ros2/README.md)
 - [UTM framebuffer validation (retired KDE 4 setup)](desktop/kde-utm/README.md)
 - [GNOME desktop in the same UTM guest](desktop/gnome-utm/README.md)
 - [Wayland client and compositor nested inside Xorg](desktop/wayland-nested/README.md)

@@ -1,0 +1,6 @@
+uint64 boot_id
+uint64 device_ms
+uint64 command_id
+int32 measured_millidegrees
+int32 setpoint_millidegrees
+uint32 applied_count
