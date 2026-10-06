@@ -50,7 +50,8 @@ checked; the existence of a socket alone does not establish success.
 
 The installed GNOME Shell 40.2 and Mutter 40.2 reject `--wayland` with
 `Unknown option --wayland`. The [pkgsrc 2026Q2 Mutter recipe](https://github.com/NetBSD/pkgsrc/blob/pkgsrc-2026Q2/wm/mutter/Makefile)
-sets `-Dwayland=false`, `-Dnative_backend=false` and `-Degl=false`.
+sets `-Dwayland=false` and `-Dnative_backend=false` unconditionally.
+It disables EGL only when EGL is unavailable; this installed Mutter links EGL.
 The current UTM guest uses `genfb`/`wsfb`; opening `/dev/dri/card0` or
 `/dev/dri/renderD128` as root returns `ENODEV`. Device node names alone are
 not evidence of a functioning DRM driver.
