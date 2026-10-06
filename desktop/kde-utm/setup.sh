@@ -16,6 +16,18 @@ home=$(getent passwd "$user" | cut -d: -f6)
 group=$(id -gn "$user")
 command -v pkgin >/dev/null || { echo 'Install and configure pkgin first.' >&2; exit 1; }
 pkgin -y install kde-workspace4 kde-baseapps4 kde-wallpapers4 dolphin konsole kate
+# The tested attr package omits the intermediate targets of two man aliases.
+# Add compatibility names without changing or replacing package-owned files.
+if pkg_info -e attr-2.5.2 >/dev/null 2>&1; then
+    for op in get set; do
+        man=/usr/pkg/man/man3
+        if [ "$(readlink "$man/attr_${op}f.3")" = "attr_${op}.3" ] &&
+            [ -f "$man/attr_attr_${op}.3" ] &&
+            [ ! -e "$man/attr_${op}.3" ] && [ ! -L "$man/attr_${op}.3" ]; then
+            ln -s "attr_attr_${op}.3" "$man/attr_${op}.3"
+        fi
+    done
+fi
 
 backup() {
     [ ! -e "$1" ] || [ -e "$1.before-emberbsd-kde" ] || cp -p "$1" "$1.before-emberbsd-kde"
@@ -38,7 +50,7 @@ if ! grep -q '^kern.maxfiles=32768$' /etc/sysctl.conf; then
 fi
 sysctl -w kern.maxfiles=32768
 mkdir -p /var/backups/emberbsd-kde
-for service in dbus kdm; do
+for service in dbus; do
     # rcorder scans every script in rc.d, including ordinary backup names.
     if [ -e "/etc/rc.d/$service" ] && [ ! -e "/var/backups/emberbsd-kde/$service" ]; then
         cp -p "/etc/rc.d/$service" "/var/backups/emberbsd-kde/$service"
@@ -46,9 +58,15 @@ for service in dbus kdm; do
     install -m 755 "/usr/pkg/share/examples/rc.d/$service" "/etc/rc.d/$service"
 done
 mkdir -p /etc/rc.conf.d
+backup /etc/rc.conf.d/dbus
+printf '%s\n' 'dbus=YES' > /etc/rc.conf.d/dbus
 backup /etc/rc.conf.d/kdm
 cat > /etc/rc.conf.d/kdm <<'EOF'
-kdm=YES
+kdm=NO
+EOF
+backup /etc/rc.conf.d/xdm
+cat > /etc/rc.conf.d/xdm <<'EOF'
+xdm=YES
 ulimit -n 8192
 EOF
 backup /etc/rc.conf
@@ -57,13 +75,12 @@ if ! grep -q '^# EmberBSD KDE desktop$' /etc/rc.conf; then
 
 # EmberBSD KDE desktop
 dbus=YES
-kdm=YES
+xdm=YES
+kdm=NO
 EOF
 fi
-backup /usr/pkg/etc/kdm/kdmrc
-sed 's/^AllowNullPasswd=true/AllowNullPasswd=false/' \
-    /usr/pkg/etc/kdm/kdmrc > /usr/pkg/etc/kdm/kdmrc.new
-mv /usr/pkg/etc/kdm/kdmrc.new /usr/pkg/etc/kdm/kdmrc
+backup /etc/X11/xdm/Xservers
+printf '%s\n' ':0 local /usr/X11R7/bin/X :0 -noretro -nolisten tcp vt05' > /etc/X11/xdm/Xservers
 mkdir -p /etc/X11/xorg.conf.d
 backup /etc/X11/xorg.conf.d/20-emberbsd-wsfb.conf
 cat > /etc/X11/xorg.conf.d/20-emberbsd-wsfb.conf <<'EOF'
@@ -87,13 +104,14 @@ if ! grep -qs 'emberbsd-kde/session-env.sh' "$home/.xprofile"; then
     printf '\n. /usr/local/share/emberbsd-kde/session-env.sh\n' >> "$home/.xprofile"
 fi
 chown "$user:$group" "$home/.xprofile"
-su - "$user" -c '/usr/pkg/bin/kwriteconfig --file kwinrc --group Compositing --key Enabled --type bool false'
-backup "$home/.dmrc"
-cat > "$home/.dmrc" <<'EOF'
-[Desktop]
-Session=kde-plasma
+backup "$home/.xsession"
+cat > "$home/.xsession" <<'EOF'
+#!/bin/sh
+. /usr/local/share/emberbsd-kde/session-env.sh
+exec /usr/pkg/bin/startkde --failsafe
 EOF
-chown "$user:$group" "$home/.dmrc"
-chmod 600 "$home/.dmrc"
+chown "$user:$group" "$home/.xsession"
+chmod 755 "$home/.xsession"
+su - "$user" -c '/usr/pkg/bin/kwriteconfig --file kwinrc --group Compositing --key Enabled --type bool false'
 pkg_admin check
-echo 'KDE configured. Reboot, log in through KDM, then run verify.sh.'
+echo 'KDE configured. Reboot, log in through XDM, then run verify.sh.'

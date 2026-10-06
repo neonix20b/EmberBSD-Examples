@@ -14,10 +14,10 @@ from the tested binary repository.
 - Installed NetBSD 11/aarch64 base and X11 sets, working SSH recovery.
 - A clean current EmberBSD checkout containing the PCI framebuffer fix
   `b4f718dabd085ed117a24f84d8558e4a43091dc0` and a native NetBSD build guest.
-- An existing local non-root account with a password for KDM login.
+- An existing local non-root account with a password for XDM login.
   The scripts neither create accounts nor change credentials or enable
   automatic login. A cloud-image account with a locked password cannot
-  log in to KDM until the operator configures its authentication.
+  log in to XDM until the operator configures its authentication.
 
 The tested firmware framebuffer is 800×600. There is no accelerated 3D,
 automatic resolution switching or tested audio setup. This is a VM
@@ -83,19 +83,23 @@ sh setup.sh YOUR_EXISTING_USER
 shutdown -r now
 ```
 
-`setup.sh` installs KDE and its applications, enables D-Bus and KDM,
-selects `wsfb`, disables compositing, and selects KDE in the account's
-`.dmrc`. It assigns the `emberdesktop` login class: 8192 open descriptors
+`setup.sh` installs KDE and its applications, enables D-Bus and XDM,
+selects `wsfb`, disables compositing, and selects KDE through the account's
+`.xsession`. It assigns the `emberdesktop` login class: 8192 open descriptors
 per process, with a 16384 hard limit. KDE's kqueue file watchers exhaust
 the default 1024-descriptor limit. The kernel file limit is set to 32768;
-KDM's greeter also receives the higher soft limit.
+XDM's greeter also receives the higher soft limit.
+
+The workspace package also ships KDM, but its Qt 4 greeter intermittently
+hung during shutdown in this VM. The setup uses NetBSD's native XDM and
+keeps KDM disabled. This does not change the KDE desktop session.
 
 The script saves configuration backups with `.before-emberbsd-kde` before
 the first change; service-script backups go under `/var/backups/emberbsd-kde`
 so rcorder will not execute them. It is intended for a dedicated demo VM; review it before
 applying it to a system with custom desktop configuration.
 
-Log in through KDM. Run `sh verify.sh` in a desktop terminal. It checks
+Log in through XDM. Run `sh verify.sh` in a desktop terminal. It checks
 KWin and Plasma processes, X11 dimensions, installed applications, a home
 directory write, DNS and HTTPS. Also check the UTM window directly:
 
@@ -113,15 +117,17 @@ mode to repair configuration, or boot the preserved kernel at the prompt.
 The stock GENERIC64 kernel may need TCG instead of HVF; restore its module
 directory as a set when returning to that kernel.
 
-Inspect `/var/log/Xorg.0.log`, `/var/log/kdm.log` and the account's
+Inspect `/var/log/Xorg.0.log`, `/var/log/xdm.log` and the account's
 `.xsession-errors` for failures. If pkg_add reports a malformed archive,
 check cached `.tgz` files with `gzip -t`, quarantine only damaged files and
 fetch them again from the official repository. Use `pkg_admin check`
 after installation. Never count a partial package installation as success.
 
 The tested catalog's `attr-2.5.2` package has two dangling manual-page
-aliases (`attr_getf.3` and `attr_setf.3`). These are separate from archive
-corruption; they do not prevent these desktop applications from running.
+aliases (`attr_getf.3` and `attr_setf.3`). The setup adds their missing
+intermediate names as compatibility symlinks to the installed pages,
+without replacing package-owned files. It then requires `pkg_admin check`
+to pass for the complete installation.
 
 KDE 4 may log unavailable HAL, activity or sound services in this minimal
 VM. Hot-plug storage management, sound, clipboard sharing, suspend and
