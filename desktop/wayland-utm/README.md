@@ -48,6 +48,26 @@ Record the actual host backend and device settings; the Metal presentation
 window alone does not establish acceleration. An inaccessible render node
 is a failed GPU check, not an invitation to widen CREATE_DUMB permissions.
 
+## GEM and PRIME lifetime probe
+
+After booting a reviewed experimental DRM kernel, first run the memory probe
+without a compositor. The caller needs access to the primary DRM node:
+
+```sh
+sh build-memory.sh "$HOME/.cache/emberbsd-wayland-build/install" ./drm-memory
+./drm-memory /dev/dri/card0
+```
+
+It rejects malformed dimensions and invalid handles, then repeats one-page
+and 8 MiB dumb-buffer allocation. A child imports the exported PRIME fd into
+a fresh DRM file and maps through both the dma-buf fd and GEM handle. Both
+processes close every handle/fd before the child verifies all mapped words
+and shared writes. Only mappings keep the final object alive. This checks
+native mmap offsets, cross-process sharing and fork/close lifetime, without
+claiming scanout or GPU rendering. Kernel memory counters are still needed
+to prove all objects are reclaimed. This probe is compiled before runtime;
+passing execution remains pending until the DRM kernel boots.
+
 ## Native session probe
 
 Preserve the known-good kernel, UTM display settings and login configuration.
