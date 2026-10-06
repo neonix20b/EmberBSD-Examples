@@ -14,11 +14,14 @@ labwc passed three, and libdrm passed three with one device-dependent skip.
 The EGL probe below passed all pixels using softpipe and exited normally.
 The loaded EGL, GBM, GLES and libdrm libraries came from the private prefix.
 
-Absolute pointer motion and a client-menu click have been checked in an
-experimental native DRM session, as described below. Physical keyboard and
-modifiers, VT handoff and VirGL acceleration remain unverified here. Preserve
-the framebuffer/GNOME/Xorg recovery path. A software or nested check is not
-GPU support.
+Native labwc/Pixman ran Kate without an Xorg parent on experimental kernel
+`67a611acb9b`. Absolute pointer motion, a client-menu click and saved text
+were checked; the user also confirmed physical mouse and keyboard operation.
+VT handoff, visible console recovery and VirGL acceleration remain unverified.
+Preserve the framebuffer/GNOME/Xorg recovery path. A software or nested check
+is not GPU support. Mesa 21.3.9 is a temporary comparison/recovery stack;
+replace it after the current common Mesa and its rebuilt consumers pass the
+same lifecycle, pixel and native session checks.
 
 ## EGL allocation and readback
 
@@ -67,8 +70,10 @@ processes close every handle/fd before the child verifies all mapped words
 and shared writes. Only mappings keep the final object alive. This checks
 native mmap offsets, cross-process sharing and fork/close lifetime, without
 claiming scanout or GPU rendering. Kernel memory counters are still needed
-to prove all objects are reclaimed. This probe is compiled before runtime;
-passing execution remains pending until the DRM kernel boots.
+to prove all objects are reclaimed. On 2026-10-06, malformed requests and
+32 cross-process mapping lifetime cycles passed on experimental kernel
+`67a611acb9b`. This does not establish 3D command execution or fenced GPU
+buffer sharing.
 
 ## Native session probe
 
@@ -87,7 +92,8 @@ sh run.sh "$HOME/.cache/emberbsd-wayland-build/install" software
 sh run.sh "$HOME/.cache/emberbsd-wayland-build/install" software \
     "$HOME/.cache/emberbsd-libopeninput-build/install"
 # After successful software KMS/input and VirGL pixel checks:
-sh run.sh "$HOME/.cache/emberbsd-wayland-build/install" virgl
+sh run.sh "$HOME/.cache/emberbsd-wayland-build/install" virgl \
+    "$HOME/.cache/emberbsd-libopeninput-build/install"
 ```
 
 The launcher forces the DRM/libinput backends and card0, creates a private
@@ -127,7 +133,9 @@ may press before its first coordinate update. A click then uses the previous
 guest position. Deliver motion to the target first and click at that same
 point, or test with a physical pointer. Captured guest events distinguish
 this automation artifact from a guest input bug. Automated keyboard batches
-also dropped keys; physical typing and modifiers still need confirmation.
+also dropped keys. The user subsequently confirmed physical mouse and
+keyboard operation after a typing/save check; the saved client file was
+verified separately. Modifier press/release traces were also checked.
 These input checks establish neither VT handoff nor VirGL acceleration.
 
 Acceptance also requires VT handoff, crash/exit recovery, same-device
