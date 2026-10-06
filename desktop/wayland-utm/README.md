@@ -14,9 +14,11 @@ labwc passed three, and libdrm passed three with one device-dependent skip.
 The EGL probe below passed all pixels using softpipe and exited normally.
 The loaded EGL, GBM, GLES and libdrm libraries came from the private prefix.
 
-At this stage native KMS, native input and VirGL acceleration are unverified.
-The working guest still uses its framebuffer kernel and GNOME/Xorg recovery
-session. A successful software or nested check is not GPU support.
+Absolute pointer motion and a client-menu click have been checked in an
+experimental native DRM session, as described below. Physical keyboard and
+modifiers, VT handoff and VirGL acceleration remain unverified here. Preserve
+the framebuffer/GNOME/Xorg recovery path. A software or nested check is not
+GPU support.
 
 ## EGL allocation and readback
 
@@ -81,6 +83,9 @@ desktop user, keeping that recovery connection available:
 
 ```sh
 sh run.sh "$HOME/.cache/emberbsd-wayland-build/install" software
+# For a QEMU USB Tablet, use Ports' separately built wscons input fix:
+sh run.sh "$HOME/.cache/emberbsd-wayland-build/install" software \
+    "$HOME/.cache/emberbsd-libopeninput-build/install"
 # After successful software KMS/input and VirGL pixel checks:
 sh run.sh "$HOME/.cache/emberbsd-wayland-build/install" virgl
 ```
@@ -91,6 +96,13 @@ It starts a separate D-Bus session and native Wayland Kate. Save a sentence,
 use menus, test modifiers and pointer coordinates, then close Kate to exit.
 Ctrl+Alt+Escape also terminates the compositor. Logs, library paths and the
 saved file remain in the printed mode-0700 temporary directory.
+The optional third argument selects an absolute private input prefix built
+with [Ports' libopeninput recipe](https://github.com/neonix20b/EmberBSD-Ports/blob/main/probes/wayland-utm/build-libopeninput.sh).
+It must contain a readable `lib/libinput.so.10`. Its library directory is
+prepended to the compositor's loader path after the setuid launcher boundary.
+Two-argument invocation retains the packaged input library path.
+`prefixes.txt` records the selected graphics/input prefixes and requested
+loader path; confirm actual mapped paths separately during acceptance.
 The compositor's private library path is restored after `seatd-launch` drops
 privileges, because NetBSD removes it at the setuid boundary. Packaged Qt
 links base EGL/GL SONAMEs that differ from the private Mesa. Kate therefore
@@ -107,6 +119,16 @@ input client in both modes; this does not test accelerated client sharing. The
 launcher never creates users, changes passwords, enables automatic login,
 or changes the default display manager. Xwayland is disabled in this first
 build; native GNOME Wayland remains a separate porting task.
+
+The patched wscons input library has been checked with QEMU USB Tablet
+absolute motion and a left click opening Kate's Edit menu. CUA/UTM automated
+clicks may warp the host pointer without delivering guest motion, and a drag
+may press before its first coordinate update. A click then uses the previous
+guest position. Deliver motion to the target first and click at that same
+point, or test with a physical pointer. Captured guest events distinguish
+this automation artifact from a guest input bug. Automated keyboard batches
+also dropped keys; physical typing and modifiers still need confirmation.
+These input checks establish neither VT handoff nor VirGL acceleration.
 
 Acceptance also requires VT handoff, crash/exit recovery, same-device
 cross-process PRIME sharing, malformed-ioctl checks, allocation stress,

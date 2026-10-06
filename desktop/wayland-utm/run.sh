@@ -2,7 +2,10 @@
 # Origin: EmberBSD; AI-assisted native DRM session probe.
 set -eu
 umask 077
-[ "$#" -eq 2 ] || { echo 'Usage: sh run.sh ABSOLUTE_GRAPHICS_PREFIX software|virgl' >&2; exit 2; }
+[ "$#" -ge 2 ] && [ "$#" -le 3 ] || {
+    echo 'Usage: sh run.sh ABSOLUTE_GRAPHICS_PREFIX software|virgl [ABSOLUTE_INPUT_PREFIX]' >&2
+    exit 2
+}
 [ "$(id -u)" -ne 0 ] || { echo 'Run as the existing desktop user.' >&2; exit 2; }
 [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ] || {
     echo 'Use a text console after logging out and stopping the display manager.' >&2
@@ -11,6 +14,16 @@ umask 077
 prefix=$1
 case "$prefix" in /*) ;; *) echo 'Prefix must be absolute.' >&2; exit 2 ;; esac
 case "$prefix" in *[!a-zA-Z0-9_./-]*) echo 'Use a prefix without whitespace or shell metacharacters.' >&2; exit 2 ;; esac
+input_prefix=
+if [ "$#" -eq 3 ]; then
+    input_prefix=$3
+    case "$input_prefix" in /*) ;; *) echo 'Input prefix must be absolute.' >&2; exit 2 ;; esac
+    case "$input_prefix" in *[!a-zA-Z0-9_./-]*) echo 'Use an input prefix without whitespace or shell metacharacters.' >&2; exit 2 ;; esac
+    [ -f "$input_prefix/lib/libinput.so.10" ] && [ -r "$input_prefix/lib/libinput.so.10" ] || {
+        echo 'Private libinput.so.10 missing or unreadable in input prefix.' >&2
+        exit 2
+    }
+fi
 PATH="$prefix/bin:/usr/pkg/bin:/usr/pkg/qt6/bin:/usr/X11R7/bin:/usr/bin:/bin"
 export PATH
 for command in labwc seatd-launch dbus-run-session kate; do command -v "$command" >/dev/null; done
@@ -54,6 +67,11 @@ LIBSEAT_BACKEND=seatd
 QT_QPA_PLATFORM=wayland
 GDK_BACKEND=wayland
 library_path="$prefix/lib:/usr/pkg/lib:/usr/X11R7/lib"
+if [ -n "$input_prefix" ]; then
+    library_path="$input_prefix/lib:$library_path"
+fi
+printf 'graphics_prefix=%s\ninput_prefix=%s\nlibrary_path=%s\n' \
+    "$prefix" "${input_prefix:-/usr/pkg}" "$library_path" > "$session/prefixes.txt"
 LIBGL_DRIVERS_PATH="$prefix/lib/dri"
 export XDG_RUNTIME_DIR XDG_SESSION_TYPE WLR_BACKENDS WLR_DRM_DEVICES
 export LIBSEAT_BACKEND WLR_RENDERER QT_QPA_PLATFORM GDK_BACKEND
