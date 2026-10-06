@@ -102,6 +102,14 @@ applying it to a system with custom desktop configuration.
 At the XDM screen, enter the username and press Enter. The `Password`
 prompt then becomes active; enter the password and press Enter again.
 Clicking the initially empty second row does not advance the login prompt.
+The setup enables asterisks for password input. Stock XDM gives no visible
+feedback in this field, which can look like a keyboard failure.
+Use the tablet with UTM's **Capture Input** off. During input testing,
+switching capture left Control and Alt pressed in the guest; an ordinary
+`a` became Ctrl+A. Releasing capture and pressing/releasing each modifier
+restored ordinary input. If this recurs, tap Control and Option separately
+after releasing capture. Check actual events with `xev` in a test session;
+do not run an input recorder while entering a real password.
 
 Run `sh verify.sh` in a desktop terminal. It checks
 KWin and Plasma processes, X11 dimensions, installed applications, a home

@@ -81,6 +81,15 @@ EOF
 fi
 backup /etc/X11/xdm/Xservers
 printf '%s\n' ':0 local /usr/X11R7/bin/X :0 -noretro -nolisten tcp vt05' > /etc/X11/xdm/Xservers
+backup /etc/X11/xdm/Xresources
+if ! grep -q '^! EmberBSD visible password feedback$' /etc/X11/xdm/Xresources; then
+    cat >> /etc/X11/xdm/Xresources <<'EOF'
+
+! EmberBSD visible password feedback
+xlogin.Login.echoPasswd: true
+xlogin.Login.echoPasswdChar: *
+EOF
+fi
 mkdir -p /etc/X11/xorg.conf.d
 backup /etc/X11/xorg.conf.d/20-emberbsd-wsfb.conf
 cat > /etc/X11/xorg.conf.d/20-emberbsd-wsfb.conf <<'EOF'
