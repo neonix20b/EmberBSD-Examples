@@ -34,6 +34,22 @@ check(const uint32_t *mapping, size_t size)
 }
 
 static void
+unmap(void *mapping, size_t size)
+{
+
+	if (munmap(mapping, size) < 0)
+		err(1, "munmap");
+}
+
+static void
+close_fd(int fd)
+{
+
+	if (close(fd) < 0)
+		err(1, "close");
+}
+
+static void
 signal_peer(int fd)
 {
 	const char byte = 'x';
@@ -85,8 +101,11 @@ roundtrip(const char *path, uint32_t width, uint32_t height)
 		err(1, "open %s", path);
 	if (drmIoctl(fd, DRM_IOCTL_MODE_CREATE_DUMB, &create) < 0)
 		err(1, "CREATE_DUMB %ux%u", width, height);
-	if (create.size > SIZE_MAX || create.size == 0)
-		errx(1, "invalid size returned by CREATE_DUMB");
+	if (create.width != width || create.height != height || create.bpp != 32 ||
+	    create.pitch < (uint64_t)width * 4 ||
+	    create.size < (uint64_t)create.pitch * height ||
+	    create.size > 64 * UINT64_C(1024) * 1024 || create.size > SIZE_MAX)
+		errx(1, "invalid geometry returned by CREATE_DUMB");
 	size = (size_t)create.size;
 	original = map_handle(fd, create.handle, size);
 	for (i = 0; i < size / sizeof(*original); i++)
@@ -100,10 +119,10 @@ roundtrip(const char *path, uint32_t width, uint32_t height)
 		err(1, "fork");
 	if (child == 0) {
 		alarm(30);
-		close(to_child[1]);
-		close(from_child[0]);
-		munmap(original, size);
-		close(fd);
+		close_fd(to_child[1]);
+		close_fd(from_child[0]);
+		unmap(original, size);
+		close_fd(fd);
 		child_fd = open(path, O_RDWR | O_CLOEXEC);
 		if (child_fd < 0)
 			err(1, "child open");
@@ -116,8 +135,8 @@ roundtrip(const char *path, uint32_t width, uint32_t height)
 		close_handle.handle = handle;
 		if (drmIoctl(child_fd, DRM_IOCTL_GEM_CLOSE, &close_handle) < 0)
 			err(1, "child GEM_CLOSE");
-		close(child_fd);
-		close(prime);
+		close_fd(child_fd);
+		close_fd(prime);
 		signal_peer(from_child[1]);
 		wait_peer(to_child[0]);
 		/* Only the child's two mappings remain after the parent handshake. */
@@ -126,24 +145,24 @@ roundtrip(const char *path, uint32_t width, uint32_t height)
 		shared[0] ^= UINT32_C(0xffffffff);
 		if (imported[0] != shared[0])
 			errx(1, "PRIME import aliases a different object");
-		munmap(shared, size);
+		unmap(shared, size);
 		if (imported[0] != (pattern(0) ^ UINT32_C(0xffffffff)))
 			errx(1, "remaining mapping lost after other mapping closed");
-		munmap(imported, size);
+		unmap(imported, size);
 		_exit(0);
 	}
-	close(to_child[0]);
-	close(from_child[1]);
+	close_fd(to_child[0]);
+	close_fd(from_child[1]);
 	wait_peer(from_child[0]);
 	close_handle.handle = create.handle;
 	if (drmIoctl(fd, DRM_IOCTL_GEM_CLOSE, &close_handle) < 0)
 		err(1, "parent GEM_CLOSE");
-	munmap(original, size);
-	close(prime);
-	close(fd);
+	unmap(original, size);
+	close_fd(prime);
+	close_fd(fd);
 	signal_peer(to_child[1]);
-	close(to_child[1]);
-	close(from_child[0]);
+	close_fd(to_child[1]);
+	close_fd(from_child[0]);
 	if (waitpid(child, &status, 0) != child || !WIFEXITED(status) || WEXITSTATUS(status) != 0)
 		errx(1, "PRIME child failed");
 	alarm(0);
@@ -156,6 +175,7 @@ invalid_requests(const char *path)
 	struct drm_mode_map_dumb map = { .handle = 0 };
 	int fd;
 
+	alarm(30);
 	fd = open(path, O_RDWR | O_CLOEXEC);
 	if (fd < 0)
 		err(1, "open %s", path);
@@ -167,7 +187,8 @@ invalid_requests(const char *path)
 		errx(1, "overflowing buffer was not rejected with EINVAL");
 	if (drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &map) != -1 || errno != ENOENT)
 		errx(1, "invalid GEM handle was not rejected with ENOENT");
-	close(fd);
+	close_fd(fd);
+	alarm(0);
 }
 
 int
