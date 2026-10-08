@@ -36,18 +36,17 @@ central project and the entry point for the ecosystem.
 - [EmberBSD-Ports](https://github.com/oxtech-ember/EmberBSD-Ports) — third-party recipes, patches and native dependencies used by examples.
 - [EmberBSD-Runtime](https://github.com/oxtech-ember/EmberBSD-Runtime) — application execution and device operations; design stage.
 - [EmberBSD-SDK](https://github.com/oxtech-ember/EmberBSD-SDK) — application contracts and development tools; design stage.
-- [Ember-Agent-Skills](https://github.com/oxtech-ember/Ember-Agent-Skills) — instructions for AI coding assistants and tested contributions.
+- [Ember-Agent-Skills](https://github.com/oxtech-ember/Ember-Agent-Skills) — portable developer skills for AI coding assistants and tested contributions.
 
 ## Connect developer skills
 
-Use a Codex CLI with plugin support:
+[Ember Agent Skills](https://github.com/oxtech-ember/Ember-Agent-Skills) provides
+portable Agent Skills packaged with Agent Plugins. Load the package or the
+complete skill directory using your development environment's supported
+mechanism. Follow the [installation and validation guide](https://github.com/oxtech-ember/Ember-Agent-Skills#use-in-your-development-environment)
+for the shared format and the separately tested Codex adapter.
 
-```sh
-codex plugin marketplace add oxtech-ember/Ember-Agent-Skills --ref main
-codex plugin add emberbsd-development@ember-agent-skills
-```
-
-Start a new conversation and ask `$emberbsd-repository-guide` to select an
-example, verify its dependencies and explain its tests. Follow the
-[installation, verification and update guide](https://github.com/oxtech-ember/Ember-Agent-Skills#install-in-codex)
-for the complete procedure and other assistant environments.
+Ask the `emberbsd-repository-guide` skill to select an example, verify its
+dependencies and explain its tests.
+The package supplies assistant instructions; it does not install a device runtime
+or create missing SDK interfaces.
