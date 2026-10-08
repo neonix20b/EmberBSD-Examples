@@ -8,7 +8,7 @@ Alignment fixes scale at one, including an independent synthetic test that
 rejects a trajectory scaled by two.
 
 SLAM is provided by the installed
-[EmberBSD Ports ORB-SLAM3 profile](https://github.com/neonix20b/EmberBSD-Ports/tree/main/probes/orb-slam3).
+[EmberBSD Ports ORB-SLAM3 profile](https://github.com/oxtech-ember/EmberBSD-Ports/tree/main/probes/orb-slam3).
 That profile pins upstream `v1.0-release`, commit
 `0df83dde1c85c7ab91a0d47de7a29685d046f637`, and preserves its GPL-3.0-or-later
 license and bundled dependency notices. The example does not contain an ORB

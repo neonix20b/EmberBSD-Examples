@@ -1,6 +1,6 @@
 # EmberBSD Examples
 
-Standalone examples for [EmberBSD](https://github.com/apovalixin/EmberBSD),
+Standalone examples for [EmberBSD](https://github.com/oxtech-ember/EmberBSD),
 a NetBSD-derived Unix for intelligent devices.
 
 ## Purpose
@@ -22,32 +22,32 @@ belong in Ports; kernel and driver fixes belong in the central OS project.
 - [Wayland client and compositor nested inside Xorg](desktop/wayland-nested/README.md)
 - [Native Wayland and VirGL runtime probes](desktop/wayland-utm/README.md)
 - [Plasma Mobile source configuration probe and current blockers](desktop/plasma-mobile/README.md)
-- [Native nested Phosh session in EmberBSD Ports](https://github.com/neonix20b/EmberBSD-Ports/tree/main/probes/phosh)
+- [Native nested Phosh session in EmberBSD Ports](https://github.com/oxtech-ember/EmberBSD-Ports/tree/main/probes/phosh)
 
 Examples contain no credentials or machine images. Review each example's
 requirements and validation limits before applying it to a system.
 
 ## Related EmberBSD projects
 
-[EmberBSD](https://github.com/apovalixin/EmberBSD#emberbsd-ecosystem) is the
+[EmberBSD](https://github.com/oxtech-ember/EmberBSD#emberbsd-ecosystem) is the
 central project and the entry point for the ecosystem.
 
-- [EmberBSD](https://github.com/apovalixin/EmberBSD) — OS, drivers, boards and system builds.
-- [EmberBSD-Ports](https://github.com/neonix20b/EmberBSD-Ports) — third-party recipes, patches and native dependencies used by examples.
-- [EmberBSD-Runtime](https://github.com/neonix20b/EmberBSD-Runtime) — application execution and device operations; design stage.
-- [EmberBSD-SDK](https://github.com/neonix20b/EmberBSD-SDK) — application contracts and development tools; design stage.
-- [Ember-Agent-Skills](https://github.com/neonix20b/Ember-Agent-Skills) — instructions for AI coding assistants and tested contributions.
+- [EmberBSD](https://github.com/oxtech-ember/EmberBSD) — OS, drivers, boards and system builds.
+- [EmberBSD-Ports](https://github.com/oxtech-ember/EmberBSD-Ports) — third-party recipes, patches and native dependencies used by examples.
+- [EmberBSD-Runtime](https://github.com/oxtech-ember/EmberBSD-Runtime) — application execution and device operations; design stage.
+- [EmberBSD-SDK](https://github.com/oxtech-ember/EmberBSD-SDK) — application contracts and development tools; design stage.
+- [Ember-Agent-Skills](https://github.com/oxtech-ember/Ember-Agent-Skills) — instructions for AI coding assistants and tested contributions.
 
 ## Connect developer skills
 
 Use a Codex CLI with plugin support:
 
 ```sh
-codex plugin marketplace add neonix20b/Ember-Agent-Skills --ref main
+codex plugin marketplace add oxtech-ember/Ember-Agent-Skills --ref main
 codex plugin add emberbsd-development@ember-agent-skills
 ```
 
 Start a new conversation and ask `$emberbsd-repository-guide` to select an
 example, verify its dependencies and explain its tests. Follow the
-[installation, verification and update guide](https://github.com/neonix20b/Ember-Agent-Skills#install-in-codex)
+[installation, verification and update guide](https://github.com/oxtech-ember/Ember-Agent-Skills#install-in-codex)
 for the complete procedure and other assistant environments.

@@ -11,7 +11,7 @@ hard real-time support.
 
 ## Build
 
-Install the [headless ORB-SLAM3 source profile](https://github.com/neonix20b/EmberBSD-Ports/tree/main/probes/orb-slam3)
+Install the [headless ORB-SLAM3 source profile](https://github.com/oxtech-ember/EmberBSD-Ports/tree/main/probes/orb-slam3)
 and its common OpenCV 5.0.0/Eigen 5.0.1 dependencies. The other requirements
 are C++17, CMake 3.20+, Ninja and libpng 1.6.58. The program uses libpng directly
 because the common OpenCV installation has no PNG codec. It does not require

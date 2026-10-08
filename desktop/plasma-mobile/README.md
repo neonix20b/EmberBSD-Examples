@@ -3,7 +3,7 @@
 **Historical result: 6.5.2 stopped at source configuration.**
 
 The current port targets stable Plasma Mobile 6.7.5 in
-[EmberBSD Ports](https://github.com/neonix20b/EmberBSD-Ports). This old probe
+[EmberBSD Ports](https://github.com/oxtech-ember/EmberBSD-Ports). This old probe
 records an earlier investigation; do not use the binary catalog's age to
 choose the EmberBSD desktop version. KDE 4 setup is retired.
 

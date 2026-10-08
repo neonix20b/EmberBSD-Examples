@@ -11,7 +11,7 @@ not be switched back to `startkde` after those packages are removed.
 
 The current mobile-shell target is **Plasma Mobile 6.7.5**, the stable upstream
 release on 2026-10-06. The port and its shared dependencies belong in
-[EmberBSD Ports](https://github.com/neonix20b/EmberBSD-Ports), with original
+[EmberBSD Ports](https://github.com/oxtech-ember/EmberBSD-Ports), with original
 source archives, checksums and portability patches. A missing binary package
 is a porting task, not a reason to select KDE 4.
 
@@ -21,7 +21,7 @@ the target GNOME release for EmberBSD. Neither old desktop is a dependency
 of Plasma Mobile.
 
 For the underlying display fix, see the
-[EmberBSD framebuffer documentation](https://github.com/apovalixin/EmberBSD/blob/main/ember/boot/utm-framebuffer.md).
+[EmberBSD framebuffer documentation](https://github.com/oxtech-ember/EmberBSD/blob/main/ember/boot/utm-framebuffer.md).
 The preserved original test used UTM on Apple Silicon, QEMU `virt`,
 NetBSD 11/aarch64 userland and an EmberBSD kernel. Framebuffer/X11 validation
 does not prove GPU acceleration, native Wayland, or physical-board support.

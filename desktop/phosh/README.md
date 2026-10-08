@@ -1,7 +1,7 @@
 # Phosh recipes live in Ports
 
 The native Phosh recipes and portability patches live in
-[EmberBSD Ports](https://github.com/neonix20b/EmberBSD-Ports/tree/main/probes/phosh).
+[EmberBSD Ports](https://github.com/oxtech-ember/EmberBSD-Ports/tree/main/probes/phosh).
 
 On 2026-10-06, Phosh 0.58.0 was built and launched inside GNOME/X11 using
 Phoc and software-rendered Wayland. The app list, GTK3 application launch,

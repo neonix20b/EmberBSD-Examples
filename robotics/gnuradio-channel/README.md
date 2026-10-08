@@ -6,7 +6,7 @@ message with carrier correction, a matched filter and binary decisions.
 It measures bit errors rather than merely checking that a graph starts.
 
 The application belongs to EmberBSD Examples. Build recipes and portability
-patches belong to the [GNU Radio source profile in Ports](https://github.com/neonix20b/EmberBSD-Ports/tree/main/probes/gnuradio).
+patches belong to the [GNU Radio source profile in Ports](https://github.com/oxtech-ember/EmberBSD-Ports/tree/main/probes/gnuradio).
 The original fixtures and application were developed with AI assistance.
 
 ## Build and run

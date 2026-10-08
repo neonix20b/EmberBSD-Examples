@@ -2,9 +2,9 @@
 
 Experimental runtime checks for the current EmberBSD/NetBSD 11 aarch64 guest.
 Build recipes, original source URLs, hashes and portability patches belong to
-[EmberBSD Ports](https://github.com/neonix20b/EmberBSD-Ports/tree/main/probes/wayland-utm).
+[EmberBSD Ports](https://github.com/oxtech-ember/EmberBSD-Ports/tree/main/probes/wayland-utm).
 The kernel integration belongs to
-[EmberBSD](https://github.com/apovalixin/EmberBSD/blob/main/ember/boot/utm-virgl-design.md).
+[EmberBSD](https://github.com/oxtech-ember/EmberBSD/blob/main/ember/boot/utm-virgl-design.md).
 
 ## Current evidence
 
@@ -103,7 +103,7 @@ use menus, test modifiers and pointer coordinates, then close Kate to exit.
 Ctrl+Alt+Escape also terminates the compositor. Logs, library paths and the
 saved file remain in the printed mode-0700 temporary directory.
 The optional third argument selects an absolute private input prefix built
-with [Ports' libopeninput recipe](https://github.com/neonix20b/EmberBSD-Ports/blob/main/probes/wayland-utm/build-libopeninput.sh).
+with [Ports' libopeninput recipe](https://github.com/oxtech-ember/EmberBSD-Ports/blob/main/probes/wayland-utm/build-libopeninput.sh).
 It must contain a readable `lib/libinput.so.10`. Its library directory is
 prepended to the compositor's loader path after the setuid launcher boundary.
 Two-argument invocation retains the packaged input library path.

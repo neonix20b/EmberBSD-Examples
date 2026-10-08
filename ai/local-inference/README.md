@@ -4,7 +4,7 @@ Run llama.cpp and whisper.cpp on EmberBSD using local model files. The example
 generates text, transcribes a WAV file, and tests a loopback HTTP completion.
 It uses no cloud inference service or private project configuration.
 
-Install the [Ports CPU packages](https://github.com/neonix20b/EmberBSD-Ports/tree/main/profiles/ai-cpu)
+Install the [Ports CPU packages](https://github.com/oxtech-ember/EmberBSD-Ports/tree/main/profiles/ai-cpu)
 first. Validated engine versions are llama.cpp 0.6.0 and whisper.cpp 1.9.4.
 Required utilities are POSIX shell tools, curl, a SHA256 utility, and `time`.
 On NetBSD, the base tools provide everything except curl and the engines.

@@ -16,7 +16,7 @@ are supplied explicitly; the example never searches private directories.
 
 - C99/POSIX compiler, SQLite development headers/library with FTS5 and JSON,
   `pkg-config`, POSIX shell and curl.
-- The existing [llama.cpp CPU package](https://github.com/neonix20b/EmberBSD-Ports/tree/main/profiles/ai-cpu).
+- The existing [llama.cpp CPU package](https://github.com/oxtech-ember/EmberBSD-Ports/tree/main/profiles/ai-cpu).
   No separate engine installation is introduced.
 - The existing [SmolLM2-135M-Instruct Q4_K_M asset](../local-inference/README.md),
   SHA256 `2e8040ceae7815abe0dcb3540b9995eaa1fa0d2ca9e797d0a635ae4433c68c2d`,
@@ -33,7 +33,7 @@ They use no Python; inference does not execute document instructions or tools.
 ## Build and run
 
 Install one supported SQLite through your package environment. The current
-target is SQLite **3.53.4**; [the Ports consumer probe](https://github.com/neonix20b/EmberBSD-Ports/tree/main/probes/sqlite)
+target is SQLite **3.53.4**; [the Ports consumer probe](https://github.com/oxtech-ember/EmberBSD-Ports/tree/main/probes/sqlite)
 records exact source identity, native tests and the earlier installed 3.53.2
 comparison. If using a temporary source prefix, select its pkg-config metadata
 and runtime search path explicitly, as described by the probe.

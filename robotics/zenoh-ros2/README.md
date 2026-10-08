@@ -21,7 +21,7 @@ the device endpoint is configured explicitly. ROS discovery runs on the ROS host
 ## Requirements
 
 - Device: EmberBSD/NetBSD 11 AArch64, C11 compiler, CMake, POSIX threads,
-  `/dev/urandom`, TCP, and the [Ports robotics package](https://github.com/neonix20b/EmberBSD-Ports/tree/main/profiles/robotics).
+  `/dev/urandom`, TCP, and the [Ports robotics package](https://github.com/oxtech-ember/EmberBSD-Ports/tree/main/profiles/robotics).
 - ROS host: Ubuntu 24.04, ROS 2 Jazzy, `rclcpp`,
   `rosidl_default_generators`, `rmw_fastrtps_cpp`, a C++17 compiler and CMake.
   Jazzy is the supported LTS chosen for this integration.
